@@ -1,0 +1,100 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.spot {
+  position: absolute;
+  width: 90px; height: 190px;
+  border: 1px solid black;
+  margin: 5px;
+}
+
+.worth {
+  position: absolute;
+  text-align: right;
+  top: 170px;
+  width: 90px;
+}
+
+#board {
+  width:600px;
+  height:600px;
+  position: relative;
+  float:left;
+}
+#players {
+  float:left;
+}
+#players a {
+  padding-left: 6px;
+}
+
+#spot0 {
+  left: 0px;
+  top: 200px;
+}
+#spot1 {
+  left: 100px;
+  top: 200px;
+}
+#spot2 {
+  left: 200px;
+  top: 200px;
+}
+#spot3 {
+  left: 300px;
+  top: 200px;
+}
+#spot4 {
+  left: 400px;
+  top: 200px;
+}
+#spot5 {
+  left: 500px;
+  top: 200px;
+}
+#spot6 {
+  left: 100px;
+  top: 400px;
+}
+#spot7 {
+  left: 200px;
+  top: 400px;
+}
+#spot8 {
+  left: 300px;
+  top: 400px;
+}
+#spot9 {
+  left: 400px;
+  top: 400px;
+}
+#spot10 {
+  left: 500px;
+  top: 400px;
+}
+#spot11 {
+  left: 100px;
+  top: 0px;
+}
+#spot12 {
+  left: 200px;
+  top: 0px;
+}
+#spot13 {
+  left: 300px;
+  top: 0px;
+}
+#spot14 {
+  left: 400px;
+  top: 0px;
+}
+#spot15 {
+  left: 500px;
+  top: 0px;
+}

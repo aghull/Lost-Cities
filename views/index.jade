@@ -1,0 +1,34 @@
+script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js")
+script(type="text/javascript", src="/socket.io/socket.io.js")
+script(type="text/javascript", src="/javascripts/feed.js")
+script(type="text/javascript", src="/models")
+script(type="text/javascript", src="/javascripts/underscore-min.js")
+
+script= "var sid='"+req.sessionID+"'"
+
+#message
+
+#board
+  #spot0.spot.deck
+  #spot1.spot.discard
+  #spot2.spot.discard
+  #spot3.spot.discard
+  #spot4.spot.discard
+  #spot5.spot.discard
+  #spot6.spot
+  #spot7.spot
+  #spot8.spot
+  #spot9.spot
+  #spot10.spot
+  #spot11.spot
+  #spot12.spot
+  #spot13.spot
+  #spot14.spot
+  #spot15.spot
+
+#players
+  form#addPlayer
+    input(name="name")
+    button#addPlayer Join
+
+script!= "updateGame("+JSON.stringify(game)+")"
