@@ -33,18 +33,19 @@ function updateGame(g, message) {
       spot.empty();
       if (game.spots[i]!=null) {
         $.each(game.spots[i], function(i,h) {
-          spot.append($('<div/>', { text:Card.render(h) }));
+          spot.append(Card.render(h));
         });
         if (i>5 && Card.worth(game.spots[i])) spot.append($('<div/>', {class:'worth', text:Card.worth(game.spots[i])}));
       }
     }
+    if (game.lastSpot) $('#spot'+game.lastSpot+' span:last').css({opacity:0}).animate({opacity:1},2000);
 
     if (me!=null) {
       hand = d.append($('<p/>', {text: 'Your hand:'}));
       _(_(game.players[me].hand).sortBy(function(c) { return c.suit*100+c.number })).each(function(h) {
-        d.append($('<span/>', { class:"card s"+h.suit+" n"+h.number, json:escape(JSON.stringify(h)), text:Card.render(h) })).append('<br/>');
+        d.append($('<div/>', { class:"card s"+h.suit+" n"+h.number, json:escape(JSON.stringify(h))}).append(Card.render(h))).append('<br/>');
       });
-      if (lc = game.players[me].lastcard) $('span.s'+lc.suit+'.n'+lc.number).css({opacity:0}).animate({opacity:1},2000);
+      if (lc = game.players[me].lastcard) $('div.s'+lc.suit+'.n'+lc.number+':first').css({opacity:0}).animate({opacity:1},2000);
     }
   }
 }

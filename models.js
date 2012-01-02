@@ -9,6 +9,7 @@ Game = function() {
   this.turn = null; // 0 or 1
   this.stage = null; // 0 or 1
   this.lastDiscard = null;
+  this.lastSpot = null;
   this.isover = false;
 }
 
@@ -51,38 +52,45 @@ Game.prototype.giveCard = function(player, spot) {
 }
 
 Game.prototype.play = function(player, card) {
+  if (this.isover) return;
   if (this.turn!=player.number) return this.message(player, 'Not your turn');
   if (this.stage!=0) return this.message(player, 'Cannot play another card');
   this.message(player, null);
   if (!player.remove(card)) return this.message(player, 'Illegal move');
-  spot = this.spots[card.suit + 6 + player.number*5];
-  if (spot.length && spot[spot.length-1].number>card.number)
+  stack = this.spots[spot = card.suit + 6 + player.number*5];
+  if (stack.length && stack[stack.length-1].number>card.number)
     return this.message(player, 'Cannot play that');
-  spot.push(card);
+  stack.push(card);
   this.lastDiscard = null;
+  this.lastSpot = spot;
   this.stage = 1;
+  player.lastcard = null;
 }
 
 Game.prototype.discard = function(player, card) {
+  if (this.isover) return;
   if (this.turn!=player.number) return this.message(player, 'Not your turn');
   if (this.stage!=0) return this.message(player, 'Cannot play another card');
   this.message(player, null);
   if (!player.remove(card)) return this.message(player, 'Illegal move');
-  spot = this.spots[card.suit + 1];
-  spot.push(card);
-  this.lastDiscard = spot;
+  stack = this.spots[spot = card.suit + 1];
+  stack.push(card);
+  this.lastDiscard = this.lastSpot = spot;
   this.stage = 1;
+  player.lastcard = null;
 }
 
 Game.prototype.draw = function(player, spot) {
+  if (this.isover) return;
   if (this.turn!=player.number) return this.message(player, 'Not your turn');
   if (this.stage!=1) return this.message(player, 'Must play a card first');
   if (this.lastDiscard == spot) return this.message(player, 'May not draw your own discard on same turn');
   this.message(player, null);
   this.giveCard(player.number, spot);
   this.stage = 0;
+  this.lastSpot = null;
   this.turn = 1-this.turn;
-  if (this.spots[0].length<=47) {
+  if (this.spots[0].length==0) {
     this.endGame();
   }
 }
@@ -108,12 +116,18 @@ Player = function(id,name) {
 }
 
 Player.prototype.remove = function(card) {
-  removed = _(this.hand).reject(function(c) { return c.suit==card.suit && c.number==card.number });
-  if (removed.length==this.hand.length) {
+  found = -1;
+  for (i in this.hand) {
+    if (this.hand[i].suit==card.suit && this.hand[i].number==card.number) {
+      found = i;
+      break;
+    }
+  }
+  if (found==-1) {
     console.log("could not find card "+card+" in "+this.hand);
     return false;
   }
-  this.hand = removed;
+  this.hand.splice(i,1);
   return true;
 }
 
@@ -122,12 +136,12 @@ Card = function(suit,number) {
   this.number = number; // 0 for coop
 }
 
-Card.render = function(card) { return ['red','white','green','yellow','blue'][card.suit]+' '+(card.number?card.number:'COOP') }
+Card.render = function(card) { return '<span class="'+['red','white','green','yellow','blue'][card.suit]+'">'+(card.number?card.number:'COOP')+'</span>' }
 Card.worth = function(cards) {
   if (cards.length==0) return 0;
   multiplier = _(cards).filter(function(c) {return c.number==0}).length+1;
   value = _(cards).reduce(function(sum, c) {return sum + c.number}, 0);
-  return multiplier*(value-20);
+  return multiplier*(value-20)+(cards.length>7?20:0);
 }
 Card.prototype.toString = function() { return Card.render(this); }
 

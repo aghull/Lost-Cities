@@ -51,12 +51,13 @@ io.sockets.on('connection', function (socket) {
   // socket messages
   socket.on('addPlayer', function(data){ 
     me = (_(game.players).find(function(p) { return p.name == data.name }));
+    if (me) me.id = data.sid;
     if (!me && game.players.length<2) {
       me = game.addPlayer(new Player(data.sid, data.name));
+      if (game.players.length==2) game.setup();
     } else {
       // game is full
     }
-    if (game.players.length==2) game.setup();
     updateGame(me);
   });
 
@@ -87,5 +88,5 @@ io.sockets.on('connection', function (socket) {
   });
 });
 
-app.listen(3000);
+app.listen(8080);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
