@@ -42,6 +42,7 @@ a {
 div.card {
   width: 100px;
   float:left;
+  text-align: center;
 }
 .playcard{
   float:left;
