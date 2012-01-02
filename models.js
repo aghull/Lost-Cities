@@ -24,7 +24,7 @@ Game.prototype.setup = function() {
   deck = [];
   for (s=0;s!=5;s++) {
     deck.push(new Card(s,0), new Card(s,0), new Card(s,0));
-    for (n=1;n<=10;n++) deck.push(new Card(s,n));
+    for (n=2;n<=10;n++) deck.push(new Card(s,n));
   }
   this.spots = new Array(16);
   this.spots[0] = _.shuffle(deck);
