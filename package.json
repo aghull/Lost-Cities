@@ -7,8 +7,6 @@
     , "socket.io": ">= 0.8"
     , "backbone": ">= 0.5"
     , "underscore": ">= 1.2"
-    , "redis": "0.7"
-    , "connect-redis": "1.2"
     , "jade": ">= 0.20"
   }
 }
