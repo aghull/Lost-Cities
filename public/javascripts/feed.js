@@ -7,6 +7,7 @@ function updateGame(g, message) {
   $.each(game.players, function(i,p) { if (p.id==sid) me=i; });
 
   if (me!=null) $('form#addPlayer').remove();
+  $('#message').empty();
   $('#message').html(message);
   d = $('#players');
   d.empty();
@@ -17,6 +18,12 @@ function updateGame(g, message) {
   if (game.turn!=null) {
     $('#spot0').html(game.spots[0].length+' cards left');
 
+    if (game.isover) {
+      $('#message').html('Game is over.<br/>');
+      $('#message').append('<strong>'+game.players[0].name+'</strong>: '+game.players[0].score+' (total '+game.players[0].totalscore+')');
+      $('#message').append(' <strong>'+game.players[1].name+'</strong>: '+game.players[1].score+' (total '+game.players[1].totalscore+')');
+      $('#message').append($('<p/>').append($('<a/>',{href:'#',onclick:"socket.emit('restartGame')",text:"Play again"})));
+    }
     for (i=1; i<=15; i++) {
       s=i;
       // reverse board for player 2
@@ -35,8 +42,9 @@ function updateGame(g, message) {
     if (me!=null) {
       hand = d.append($('<p/>', {text: 'Your hand:'}));
       _(_(game.players[me].hand).sortBy(function(c) { return c.suit*100+c.number })).each(function(h) {
-        d.append($('<span/>', { class:"card", json:escape(JSON.stringify(h)), text:Card.render(h) })).append('<br/>');
+        d.append($('<span/>', { class:"card s"+h.suit+" n"+h.number, json:escape(JSON.stringify(h)), text:Card.render(h) })).append('<br/>');
       });
+      if (lc = game.players[me].lastcard) $('span.s'+lc.suit+'.n'+lc.number).css({opacity:0}).animate({opacity:1},2000);
     }
   }
 }

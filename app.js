@@ -60,6 +60,11 @@ io.sockets.on('connection', function (socket) {
     updateGame(me);
   });
 
+  socket.on('restartGame', function(data){ 
+    game.setup();
+    updateGame(me);
+  });
+
   socket.on('play', function(data){ 
     me = (_(game.players).find(function(p) { return p.id == data.sid }));
     if (!me) return; 

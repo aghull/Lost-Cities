@@ -9,6 +9,7 @@ Game = function() {
   this.turn = null; // 0 or 1
   this.stage = null; // 0 or 1
   this.lastDiscard = null;
+  this.isover = false;
 }
 
 Game.prototype.addPlayer = function(player) {
@@ -17,7 +18,8 @@ Game.prototype.addPlayer = function(player) {
   return player;
 }
 
-Game.prototype.setup = function(turn) {
+Game.prototype.setup = function() {
+  this.isover = false;
   deck = [];
   for (s=0;s!=5;s++) {
     deck.push(new Card(s,0), new Card(s,0), new Card(s,0));
@@ -26,7 +28,11 @@ Game.prototype.setup = function(turn) {
   this.spots = new Array(16);
   this.spots[0] = _.shuffle(deck);
   for (i=1;i<=15;i++) this.spots[i] = [];
-  this.turn = turn||parseInt(Math.random()*2);
+
+  if (this.players[0].score>this.players[1].score) this.turn = 0;
+  else if (this.players[0].score<this.players[1].score) this.turn = 1;
+  else this.turn = parseInt(Math.random()*2);
+
   this.stage = 0;
   this.players[0].hand = [];
   this.players[1].hand = [];
@@ -35,11 +41,13 @@ Game.prototype.setup = function(turn) {
     this.giveCard(0, 0);
     this.giveCard(1, 0);
   }
+  this.players[0].lastcard = null;
+  this.players[1].lastcard = null;
 }
 
 Game.prototype.giveCard = function(player, spot) {
   if (spot>5 || !this.spots[spot] || !this.spots[spot].length) return;
-  this.players[player].hand.push(this.spots[spot].pop());
+  this.players[player].hand.push(this.players[player].lastcard = this.spots[spot].pop());
 }
 
 Game.prototype.play = function(player, card) {
@@ -74,6 +82,15 @@ Game.prototype.draw = function(player, spot) {
   this.giveCard(player.number, spot);
   this.stage = 0;
   this.turn = 1-this.turn;
+  if (this.spots[0].length<=47) {
+    this.endGame();
+  }
+}
+
+Game.prototype.endGame = function() {
+  this.isover = true;
+  this.players[0].totalscore += (this.players[0].score = Card.worth(this.spots[6])+Card.worth(this.spots[7])+Card.worth(this.spots[8])+Card.worth(this.spots[9])+Card.worth(this.spots[10]));
+  this.players[1].totalscore += (this.players[1].score = Card.worth(this.spots[11])+Card.worth(this.spots[12])+Card.worth(this.spots[13])+Card.worth(this.spots[14])+Card.worth(this.spots[15]));
 }
 
 Game.prototype.message = function(player, message) {
@@ -85,6 +102,8 @@ Player = function(id,name) {
   this.name = name;
   this.number = null;
   this.message = null;
+  this.score = 0;
+  this.totalscore = 0;
   this.hand = [];
 }
 
