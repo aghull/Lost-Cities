@@ -26,9 +26,10 @@ script= "var sid='"+req.sessionID+"'"
   #spot14.spot
   #spot15.spot
 
-#players
+#playerinfo
   form#addPlayer
     input(name="name")
     button#addPlayer Join
+  #players
 
 script!= "updateGame("+JSON.stringify(game)+")"

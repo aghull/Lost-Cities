@@ -6,8 +6,7 @@
 var
   express = require('express'),
   _ = require('underscore'),
-  models = require('./models'),
-  RedisStore = require('connect-redis')(express);
+  models = require('./models')
 
 var app = module.exports = express.createServer();
 var io = require('socket.io').listen(app);
@@ -21,7 +20,7 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.cookieParser());
-  app.use(express.session({ secret: "luvchild", store: new RedisStore }));
+  app.use(express.session({ secret: "luvchild" }));
   app.use(app.router);
   app.use(express.static(__dirname + '/public'));
 });

@@ -6,7 +6,7 @@ function updateGame(g, message) {
   me = null;
   $.each(game.players, function(i,p) { if (p.id==sid) me=i; });
 
-  if (me) $('form#addPlayer').remove();
+  if (me!=null) $('form#addPlayer').remove();
   $('#message').html(message);
   d = $('#players');
   d.empty();
