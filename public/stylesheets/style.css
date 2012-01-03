@@ -12,13 +12,14 @@ a {
   width: 90px; height: 190px;
   border: 1px solid black;
   margin: 5px;
+  overflow: auto;
 }
 
 .worth {
   position: absolute;
   text-align: right;
   top: 170px;
-  width: 90px;
+  width: 100%;
 }
 
 #board {

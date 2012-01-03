@@ -34,11 +34,11 @@ app.configure('production', function(){
 });
 
 var game = new models.Game;
+console.log(game.toJSON());
 
 // Routes
 app.get('/', function(req, res) { res.render('index', {req:req, game:game, title:'Lost Cities'}) });
 app.get('/models', function(req, res) { res.sendfile('models.js') });
-app.get('/underscore', function(req, res) { res.sendfile('../node_modules/underscore/underscore-min.js') });
 app.get('/*.(js|css)', function(req, res) { res.sendfile("./public"+req.url) });
 
 io.sockets.on('connection', function (socket) {
