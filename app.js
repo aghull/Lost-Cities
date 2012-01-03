@@ -34,7 +34,6 @@ app.configure('production', function(){
 });
 
 var game = new models.Game;
-console.log(game.toJSON());
 
 // Routes
 app.get('/', function(req, res) { res.render('index', {req:req, game:game, title:'Lost Cities'}) });
