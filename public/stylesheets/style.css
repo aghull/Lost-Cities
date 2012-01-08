@@ -91,9 +91,9 @@ div.card {
 .spot.discard {
   top: 200px;
 }
-.spot.p1 {
+.spot.p1, body.player2 .spot.p2 {
   top: 400px;
 }
-.spot.p2 {
+.spot.p2, body.player2 .spot.p1 {
   top: 0px;
 }

@@ -2,6 +2,15 @@ if (typeof(exports)!=='undefined') {
   var _ = require('underscore');
 }
 
+Base = function() {
+}
+Base.prototype.load = function(data) {
+  var me = this;
+  _(data).each(function(v,n) { me[n] = v; });
+  return this;
+};
+
+
 Game = function() {
   this.players = [];
   //this.addPlayer(new Player('x','placeholder'));
@@ -13,6 +22,7 @@ Game = function() {
   this.isover = false;
 }
 
+Game.prototype.suits = ['red','white','green','yellow','blue'];
 Game.prototype.addPlayer = function(player) {
   player.number = this.players.length;
   this.players.push(player);
@@ -88,8 +98,10 @@ Game.prototype.draw = function(player, spot) {
   this.message(player, null);
   this.giveCard(player.number, spot);
   this.stage = 0;
-  this.lastSpot = null;
   this.turn = 1-this.turn;
+  this.message(this.players[this.turn],
+               player.name+' played '+this.suits[(this.lastSpot-1)%5]+' and picked up '+(spot==0?'from deck':player.lastcard.suitName()+' '+player.lastcard.pipName()));
+  this.lastSpot = null;
   if (this.spots[0].length==0) {
     this.endGame();
   }
@@ -136,14 +148,16 @@ Card = function(suit,number) {
   this.number = number; // 0 for coop
 }
 
-Card.render = function(card) { return '<span class="'+['red','white','green','yellow','blue'][card.suit]+'">'+(card.number?card.number:'COOP')+'</span>' }
+Card.prototype = new Base;
+Card.prototype.suitName = function() { return Game.prototype.suits[this.suit]; };
+Card.prototype.pipName = function() { return this.number?this.number:'COOP' };
+Card.prototype.toString = function() { return '<span class="'+this.suitName()+'">'+this.pipName()+'</span>' };
 Card.worth = function(cards) {
   if (cards.length==0) return 0;
   multiplier = _(cards).filter(function(c) {return c.number==0}).length+1;
   value = _(cards).reduce(function(sum, c) {return sum + c.number}, 0);
   return multiplier*(value-20)+(cards.length>7?20:0);
 }
-Card.prototype.toString = function() { return Card.render(this); }
 
 if (typeof(exports)!=='undefined') {
   exports.Game = Game;

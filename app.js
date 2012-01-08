@@ -43,8 +43,19 @@ app.get('/*.(js|css)', function(req, res) { res.sendfile("./public"+req.url) });
 io.sockets.on('connection', function (socket) {
 
   function updateGame(player) {
-    socket.emit('update', {game:game, message:player.message}); 
-    socket.broadcast.emit('update', {game:game}); 
+    // create JSON states showing only player-known info
+    gameStates = [];
+    gameStates[0] = JSON.parse(JSON.stringify(game));
+    gameStates[1] = JSON.parse(JSON.stringify(game));
+    // deck only can see number of cards
+    if (game.spots[0] != null) gameStates[0].spots[0] = gameStates[1].spots[0] = new Array(game.spots[0].length);
+    // cannot see each others hands
+    if (game.players.length==2) {
+      gameStates[0].players[1].hand = [];
+      gameStates[1].players[0].hand = [];
+    }
+    socket.emit('update', {game:gameStates[player.number], message:player.message}); 
+    socket.broadcast.emit('update', {game:gameStates[1-player.number], message:game.players.length==2?game.players[1-player.number].message:null}); 
   }
 
   // socket messages

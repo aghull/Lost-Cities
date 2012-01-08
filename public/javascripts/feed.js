@@ -4,7 +4,8 @@ var socket;
 function updateGame(g, message) {
   game = g;
   me = null;
-  $.each(game.players, function(i,p) { if (p.id==sid) me=i; });
+  $.each(game.players, function(i,p) { if (p.id==sid) me = i; });
+  if (me != null) $('body').addClass('player'+(me+1));
 
   if (me!=null) $('form#addPlayer').remove();
   $('#message').empty();
@@ -12,7 +13,7 @@ function updateGame(g, message) {
   d = $('#players');
   d.empty();
   $.each(game.players, function(i,p) {
-      d.append($('<p/>', {text: p.name, style: "font-weight: "+(game.turn==i?'bold':'normal')}));
+    d.append($('<p/>', {text: p.name, style: "font-weight: "+(game.turn==i?'bold':'normal')}));
   });
 
   if (game.turn!=null) {
@@ -24,16 +25,13 @@ function updateGame(g, message) {
       $('#message').append(' <strong>'+game.players[1].name+'</strong>: '+game.players[1].score+' (total '+game.players[1].totalscore+')');
       $('#message').append($('<p/>').append($('<a/>',{href:'#',onclick:"socket.emit('restartGame')",text:"Play again"})));
     }
+    console.log(game.suits);
     for (i=1; i<=15; i++) {
-      s=i;
-      // reverse board for player 2
-      if (me==1 && s>10) s-=5;
-      else if (me==1 && s<=10 && s>5) s+=5;
-      spot = $('#spot'+s);
+      spot = $('#spot'+i);
       spot.empty();
       if (game.spots[i]!=null) {
         $.each(game.spots[i], function(i,h) {
-          spot.append(Card.render(h));
+          spot.append(new Card().load(h).toString());
         });
         if (i>5 && Card.worth(game.spots[i])) spot.append($('<div/>', {class:'worth', text:Card.worth(game.spots[i])}));
       }
@@ -43,9 +41,11 @@ function updateGame(g, message) {
     if (me!=null) {
       hand = d.append($('<p/>', {text: 'Your hand:'}));
       _(_(game.players[me].hand).sortBy(function(c) { return c.suit*100+c.number })).each(function(h) {
-        d.append($('<div/>', { class:"card s"+h.suit+" n"+h.number, json:escape(JSON.stringify(h))}).append(Card.render(h))).append('<br/>');
+        d.append($('<div/>', { class:"card s"+h.suit+" n"+h.number, json:escape(JSON.stringify(h))}).append(new Card().load(h).toString())).append('<br/>');
       });
-      if (lc = game.players[me].lastcard) $('div.s'+lc.suit+'.n'+lc.number+':first').css({opacity:0}).animate({opacity:1},2000);
+
+      if ((lc = game.players[me].lastcard) && (game.turn==me ^ game.stage==0))
+        $('div.s'+lc.suit+'.n'+lc.number+':first').css({opacity:0}).animate({opacity:1},2000);
     }
   }
 }
