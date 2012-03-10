@@ -44,6 +44,13 @@ div.card {
   width: 100px;
   float:left;
   text-align: center;
+  border-width: 1px 1px 0;
+  border-color: black;
+  border-style: solid;
+}
+div.card:nth-last-of-type(1) {
+  border-bottom: 1px solid black;
+  height:100px;
 }
 .playcard{
   float:left;
@@ -52,6 +59,9 @@ div.card {
   border-bottom: 1px solid black;
   display: block;
   text-align: center;
+}
+.spot span:nth-last-of-type(1) {
+  height: 100px;
 }
 .card.s0 {
   background-color: #fcc;

@@ -3,15 +3,33 @@ if (typeof(exports)!=='undefined') {
 }
 
 Base = function() {
+  this.__class = 'Base';
 }
 Base.prototype.load = function(data) {
-  var me = this;
-  _(data).each(function(v,n) { me[n] = v; });
+  function expand(obj,val) {
+    if (val==null) {
+      obj = null;
+    } else if (val instanceof Array) {
+      if (obj==null) obj = [];
+      _(val).each(function(v,n) {
+        obj[n] = expand(obj[n], v);
+      });
+    } else if (typeof val=='object') {
+      if (obj==null) obj = val.__class?eval('new '+val.__class):{};
+      _(val).each(function(v,n) {
+        obj[n] = expand(obj[n], v);
+      });
+    } else {
+      obj = val;
+    }
+    return obj;
+  }
+  expand(this, data);
   return this;
 };
 
-
 Game = function() {
+  this.__class = 'Game';
   this.players = [];
   //this.addPlayer(new Player('x','placeholder'));
   this.spots = new Array(16); // 0 - deck, 1-5 discards, 6-10 p1, 11-15 p2
@@ -22,6 +40,7 @@ Game = function() {
   this.isover = false;
 }
 
+Game.prototype = new Base;
 Game.prototype.suits = ['red','white','green','yellow','blue'];
 Game.prototype.addPlayer = function(player) {
   player.number = this.players.length;
@@ -118,6 +137,7 @@ Game.prototype.message = function(player, message) {
 }
 
 Player = function(id,name) {
+  this.__class = 'Player';
   this.id = id;
   this.name = name;
   this.number = null;
@@ -127,6 +147,7 @@ Player = function(id,name) {
   this.hand = [];
 }
 
+Player.prototype = new Base;
 Player.prototype.remove = function(card) {
   found = -1;
   for (i in this.hand) {
@@ -144,6 +165,7 @@ Player.prototype.remove = function(card) {
 }
 
 Card = function(suit,number) {
+  this.__class = 'Card';
   this.suit = suit;
   this.number = number; // 0 for coop
 }

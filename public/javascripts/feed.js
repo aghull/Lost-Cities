@@ -2,7 +2,10 @@ var game;
 var socket;
 
 function updateGame(g, message) {
-  game = g;
+  noGame = game!=null && game.id==null;
+  game = new Game().load(g);
+  if (noGame && game.id!=null) document.location='/game/'+game.id;
+
   me = null;
   $.each(game.players, function(i,p) { if (p.id==sid) me = i; });
   if (me != null) $('body').addClass('player'+(me+1));
@@ -23,7 +26,7 @@ function updateGame(g, message) {
       $('#message').html('Game is over.<br/>');
       $('#message').append('<strong>'+game.players[0].name+'</strong>: '+game.players[0].score+' (total '+game.players[0].totalscore+')');
       $('#message').append(' <strong>'+game.players[1].name+'</strong>: '+game.players[1].score+' (total '+game.players[1].totalscore+')');
-      $('#message').append($('<p/>').append($('<a/>',{href:'#',onclick:"socket.emit('restartGame')",text:"Play again"})));
+      $('#message').append($('<p/>').append($('<a/>',{href:'#',onclick:"socket.emit('restartGame',{gid:\'"+game.id+"\'}, )",text:"Play again"})));
     }
     console.log(game.suits);
     for (i=1; i<=15; i++) {
@@ -31,7 +34,7 @@ function updateGame(g, message) {
       spot.empty();
       if (game.spots[i]!=null) {
         $.each(game.spots[i], function(i,h) {
-          spot.append(new Card().load(h).toString());
+          spot.append(h.toString());
         });
         if (i>5 && Card.worth(game.spots[i])) spot.append($('<div/>', {class:'worth', text:Card.worth(game.spots[i])}));
       }
@@ -41,7 +44,7 @@ function updateGame(g, message) {
     if (me!=null) {
       hand = d.append($('<p/>', {text: 'Your hand:'}));
       _(_(game.players[me].hand).sortBy(function(c) { return c.suit*100+c.number })).each(function(h) {
-        d.append($('<div/>', { class:"card s"+h.suit+" n"+h.number, json:escape(JSON.stringify(h))}).append(new Card().load(h).toString())).append('<br/>');
+        d.append($('<div/>', { class:"card s"+h.suit+" n"+h.number, json:escape(JSON.stringify(h))}).append(h.toString())).append('<br/>');
       });
 
       if ((lc = game.players[me].lastcard) && (game.turn==me ^ game.stage==0))
@@ -52,6 +55,8 @@ function updateGame(g, message) {
 
 $(document).ready(function () {
   socket = io.connect();
+  socket.emit('addPlayer', {gid:game.id, sid:sid});
+
   socket.on('update', function(data) {
     if (data.game) {
       updateGame(data.game, data.message);
@@ -59,14 +64,14 @@ $(document).ready(function () {
   });
 
   $('button#addPlayer').click(function() {
-    socket.emit('addPlayer', {sid: sid, name: this.form.name.value});
+    socket.emit('addPlayer', {gid:game.id, sid:sid, name:this.form.name.value});
     return false;
   });
 
   for(i=0;i<=5;i++) {
     $('#spot'+i).mouseover(function() { $(this).css('cursor','pointer') });
     $('#spot'+i).click(function() {
-      socket.emit('draw', {sid: sid, spot:this.id.substr(4)});
+      socket.emit('draw', {gid:game.id, sid:sid, spot:this.id.substr(4)});
       return false;
     });
   };
@@ -82,10 +87,10 @@ $(document).ready(function () {
 })
 
 function discard(card) {
-  socket.emit('discard', {sid: sid, card: card });
+  socket.emit('discard', {gid:game.id, sid:sid, card:card });
 }
 function play(card) {
-  socket.emit('play', {sid: sid, card: card });
+  socket.emit('play', {gid:game.id, sid:sid, card:card });
 }
 
 

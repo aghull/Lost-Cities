@@ -6,7 +6,9 @@
 var
   express = require('express'),
   _ = require('underscore'),
-  models = require('./models')
+  models = require('./models'),
+  redis = require('redis'),
+  sys = require('util')
 
 var app = module.exports = express.createServer();
 var io = require('socket.io').listen(app);
@@ -33,16 +35,47 @@ app.configure('production', function(){
   app.use(express.errorHandler()); 
 });
 
-var game = new models.Game;
-
 // Routes
-app.get('/', function(req, res) { res.render('index', {req:req, game:game, title:'Lost Cities'}) });
+app.get('/', function(req, res) { main(req,res) });
+app.get('/game/:game', function(req, res) { main(req,res) });
 app.get('/models', function(req, res) { res.sendfile('models.js') });
 app.get('/*.(js|css)', function(req, res) { res.sendfile("./public"+req.url) });
 
+function main(req,res) {
+  loadGame(req.params.game, function(game) {
+    res.render('index', {
+      sid:req.sessionID,
+      game:game,
+      title:'Lost Cities'
+    });
+  });
+}
+
+function loadGame(id, callback) {
+  var game = new Game();
+  if (id!=null) {
+    client = redis.createClient();
+    client.get(id, function(err, val) {
+      if (val!=null) {
+        game.load(JSON.parse(val));
+      }
+      callback.call(this, game);
+    });
+  } else {
+    callback.call(this, game);
+  }
+}
+
+function saveGame(game) {
+  if (!game.id) return;
+  client = redis.createClient();
+  client.set(game.id,JSON.stringify(game));
+}
+
 io.sockets.on('connection', function (socket) {
 
-  function updateGame(player) {
+  function updateGame(game, player) {
+    saveGame(game);
     // create JSON states showing only player-known info
     gameStates = [];
     gameStates[0] = JSON.parse(JSON.stringify(game));
@@ -60,44 +93,62 @@ io.sockets.on('connection', function (socket) {
 
   // socket messages
   socket.on('addPlayer', function(data){ 
-    me = (_(game.players).find(function(p) { return p.name == data.name }));
-    if (me) me.id = data.sid;
-    if (!me && game.players.length<2) {
-      me = game.addPlayer(new Player(data.sid, data.name));
-      if (game.players.length==2) game.setup();
-    } else {
-      // game is full
-    }
-    updateGame(me);
+    game = loadGame(data.gid, function(game) {
+      me = (_(game.players).find(function(p) { return p.name == data.name || p.id == data.sid }));
+      if (me) me.id = data.sid;
+      if (!me && data.name && game.players.length<2) {
+        me = game.addPlayer(new Player(data.sid, data.name));
+        if (game.players.length==2) {
+          game.setup();
+        } else {
+          sys.exec("uuidgen", function(err, stdout, stderr) {
+            gid = stdout.trim();
+            game.id = gid;
+            updateGame(game, me);
+          });
+        }
+      } else {
+        // game is full
+      }
+      if (me) updateGame(game, me);
+    });
   });
 
   socket.on('restartGame', function(data){ 
-    game.setup();
-    updateGame(me);
+    game = loadGame(data.gid, function(game) {
+      game.setup();
+      updateGame(game, me);
+    });
   });
 
   socket.on('play', function(data){ 
-    me = (_(game.players).find(function(p) { return p.id == data.sid }));
-    if (!me) return; 
-    game.play(me, new Card(data.card.suit,data.card.number));
-    updateGame(me);
+    game = loadGame(data.gid, function(game) {
+      me = (_(game.players).find(function(p) { return p.id == data.sid }));
+      if (!me) return; 
+      game.play(me, new Card(data.card.suit,data.card.number));
+      updateGame(game, me);
+    });
   });
 
   socket.on('discard', function(data){ 
-    me = (_(game.players).find(function(p) { return p.id == data.sid }));
-    if (!me) return; 
-    game.discard(me, new Card(data.card.suit,data.card.number));
-    updateGame(me);
+    game = loadGame(data.gid, function(game) {
+      me = (_(game.players).find(function(p) { return p.id == data.sid }));
+      if (!me) return; 
+      game.discard(me, new Card(data.card.suit,data.card.number));
+      updateGame(game, me);
+    });
   });
 
   socket.on('draw', function(data){ 
-    me = (_(game.players).find(function(p) { return p.id == data.sid }));
-    if (!me) return; 
-    game.draw(me, data.spot);
-    updateGame(me);
+    game = loadGame(data.gid, function(game) {
+      me = (_(game.players).find(function(p) { return p.id == data.sid }));
+      if (!me) return; 
+      game.draw(me, data.spot);
+      updateGame(game, me);
+    });
   });
 });
 
 var port = process.env.PORT || 8080;
 app.listen(port);
-console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
+
