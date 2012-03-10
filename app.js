@@ -41,6 +41,15 @@ app.get('/game/:game', function(req, res) { main(req,res) });
 app.get('/models', function(req, res) { res.sendfile('models.js') });
 app.get('/*.(js|css)', function(req, res) { res.sendfile("./public"+req.url) });
 
+if (process.env.REDISTOGO_URL) {
+  var rtg   = require("url").parse(process.env.REDISTOGO_URL);
+  var redis = redis.createClient(rtg.port, rtg.hostname);
+
+  redis.auth(rtg.auth.split(":")[1]);
+} else {
+  var redis = redis.createClient();
+}
+
 function main(req,res) {
   loadGame(req.params.game, function(game) {
     res.render('index', {
@@ -54,8 +63,7 @@ function main(req,res) {
 function loadGame(id, callback) {
   var game = new Game();
   if (id!=null) {
-    client = redis.createClient();
-    client.get(id, function(err, val) {
+    redis.get(id, function(err, val) {
       if (val!=null) {
         game.load(JSON.parse(val));
       }
@@ -68,8 +76,7 @@ function loadGame(id, callback) {
 
 function saveGame(game) {
   if (!game.id) return;
-  client = redis.createClient();
-  client.set(game.id,JSON.stringify(game));
+  redis.set(game.id,JSON.stringify(game));
 }
 
 io.sockets.on('connection', function (socket) {
