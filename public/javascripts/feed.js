@@ -8,9 +8,11 @@ function updateGame(g, message) {
 
   me = null;
   $.each(game.players, function(i,p) { if (p.id==sid) me = i; });
-  if (me != null) $('body').addClass('player'+(me+1));
-
-  if (me!=null) $('form#addPlayer').remove();
+  if (me != null) {
+    $('body').addClass('player'+(me+1));
+    $('form#addPlayer').remove();
+    if (game.players.length==1) message='Player 2 may join at <a href="'+document.location+'">'+document.location+'</a>';
+  }
   $('#message').empty();
   $('#message').html(message);
   d = $('#players');
@@ -56,7 +58,7 @@ function updateGame(g, message) {
 $(document).ready(function () {
   socket = io.connect();
   socket.emit('addPlayer', {gid:game.id, sid:sid});
-
+  
   socket.on('update', function(data) {
     if (data.game) {
       updateGame(data.game, data.message);
@@ -65,6 +67,8 @@ $(document).ready(function () {
 
   $('button#addPlayer').click(function() {
     socket.emit('addPlayer', {gid:game.id, sid:sid, name:this.form.name.value});
+    $('#message').html('Joining...');
+    $('form#addPlayer').remove();
     return false;
   });
 

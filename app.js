@@ -38,6 +38,7 @@ app.configure('production', function(){
 // Routes
 app.get('/', function(req, res) { main(req,res) });
 app.get('/game/:game', function(req, res) { main(req,res) });
+app.get('/games', function(req, res) { games(req,res) });
 app.get('/models', function(req, res) { res.sendfile('models.js') });
 app.get('/*.(js|css)', function(req, res) { res.sendfile("./public"+req.url) });
 
@@ -65,7 +66,9 @@ function loadGame(id, callback) {
   if (id!=null) {
     redis.get(id, function(err, val) {
       if (val!=null) {
-        game.load(JSON.parse(val));
+        try {
+          game.load(JSON.parse(val));
+        } catch (e) {}
       }
       callback.call(this, game);
     });
@@ -77,6 +80,38 @@ function loadGame(id, callback) {
 function saveGame(game) {
   if (!game.id) return;
   redis.set(game.id,JSON.stringify(game));
+}
+
+function listGames(callback) {
+  redis.keys('*', function(err, keys) {
+    callback.call(this, keys);
+  });
+}    
+
+function games(req,res) {
+  var gamelist = {};
+  listGames(function(games) {
+    console.log(games);
+    gamecount=games.length;
+    _(games).each(function(game) {
+      console.log(game);
+      loadGame(game, function(game) {
+        gamecount--;
+        if (game.players && game.players.length) {
+          g = gamelist[game.id] = {};
+          _(game.players).each(function(player) {
+            g[player.name] = player.score;
+          });
+        }
+        if (!gamecount) {
+          res.render('games', {
+            games:gamelist,
+            title:'Lost Cities'
+          });
+        }
+      });
+    });
+  });
 }
 
 io.sockets.on('connection', function (socket) {

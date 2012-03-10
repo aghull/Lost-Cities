@@ -30,6 +30,7 @@ script= "var sid='"+sid+"'"
   form#addPlayer
     input(name="name")
     button#addPlayer Join
+    p= game.id?"Enter your name to join the game":"Enter your name to create a game"
   #players
 
 script!= "updateGame("+JSON.stringify(game)+")"
