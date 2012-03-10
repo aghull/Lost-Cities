@@ -101,11 +101,9 @@ io.sockets.on('connection', function (socket) {
         if (game.players.length==2) {
           game.setup();
         } else {
-          sys.exec("uuidgen", function(err, stdout, stderr) {
-            gid = stdout.trim();
-            game.id = gid;
-            updateGame(game, me);
-          });
+          gid = (Math.floor(Math.random()*0xffffffff)).toString(16)
+          game.id = gid;
+          updateGame(game, me);
         }
       } else {
         // game is full
