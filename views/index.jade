@@ -1,4 +1,4 @@
-script(type="text/javascript", src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js")
+script(type="text/javascript", src="http://code.jquery.com/jquery-latest.min.js ")
 script(type="text/javascript", src="/socket.io/socket.io.js")
 script(type="text/javascript", src="/javascripts/feed.js")
 script(type="text/javascript", src="/models")
@@ -6,25 +6,32 @@ script(type="text/javascript", src="/javascripts/underscore-min.js")
 
 script= "var sid='"+sid+"'"
 
+h1 Lost Cities
+
 #message
 
-#board
-  #spot0.spot.deck
-  #spot1.s0.spot.discard
-  #spot2.s1.spot.discard
-  #spot3.s2.spot.discard
-  #spot4.s3.spot.discard
-  #spot5.s4.spot.discard
-  #spot6.s0.spot.p1
-  #spot7.s1.spot.p1
-  #spot8.s2.spot.p1
-  #spot9.s3.spot.p1
-  #spot10.s4.spot.p1
-  #spot11.s0.spot.p2
-  #spot12.s1.spot.p2
-  #spot13.s2.spot.p2
-  #spot14.s3.spot.p2
-  #spot15.s4.spot.p2
+table#board
+  tr#discard
+    td#spot0.deck
+    td#spot1
+    td#spot2
+    td#spot3
+    td#spot4
+    td#spot5
+  tr#p1
+    td
+    td#spot6
+    td#spot7
+    td#spot8
+    td#spot9
+    td#spot10
+  tr#p2
+    td
+    td#spot11
+    td#spot12
+    td#spot13
+    td#spot14
+    td#spot15
 
 #playerinfo
   form#addPlayer

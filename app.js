@@ -165,7 +165,7 @@ io.sockets.on('connection', function (socket) {
     game = loadGame(data.gid, function(game) {
       me = (_(game.players).find(function(p) { return p.id == data.sid }));
       if (!me) return; 
-      game.play(me, new Card(data.card.suit,data.card.number));
+      game.play(me, new Card().load(data.card));
       updateGame(game, me);
     });
   });
@@ -174,7 +174,7 @@ io.sockets.on('connection', function (socket) {
     game = loadGame(data.gid, function(game) {
       me = (_(game.players).find(function(p) { return p.id == data.sid }));
       if (!me) return; 
-      game.discard(me, new Card(data.card.suit,data.card.number));
+      game.discard(me, new Card.load(data.card));
       updateGame(game, me);
     });
   });

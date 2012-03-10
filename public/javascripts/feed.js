@@ -3,13 +3,14 @@ var socket;
 
 function updateGame(g, message) {
   noGame = game!=null && game.id==null;
+  if (game!=null && game.id!=g.id) return;
   game = new Game().load(g);
   if (noGame && game.id!=null) document.location='/game/'+game.id;
 
   me = null;
   $.each(game.players, function(i,p) { if (p.id==sid) me = i; });
   if (me != null) {
-    $('body').addClass('player'+(me+1));
+    $("table#board").prepend($("tr#p"+(2-me)).remove());
     $('form#addPlayer').remove();
     if (game.players.length==1) message='Player 2 may join at <a href="'+document.location+'">'+document.location+'</a>';
   }
@@ -30,7 +31,6 @@ function updateGame(g, message) {
       $('#message').append(' <strong>'+game.players[1].name+'</strong>: '+game.players[1].score+' (total '+game.players[1].totalscore+')');
       $('#message').append($('<p/>').append($('<a/>',{href:'#',onclick:"socket.emit('restartGame',{gid:\'"+game.id+"\'}, )",text:"Play again"})));
     }
-    console.log(game.suits);
     for (i=1; i<=15; i++) {
       spot = $('#spot'+i);
       spot.empty();
@@ -46,7 +46,7 @@ function updateGame(g, message) {
     if (me!=null) {
       hand = d.append($('<p/>', {text: 'Your hand:'}));
       _(_(game.players[me].hand).sortBy(function(c) { return c.suit*100+c.number })).each(function(h) {
-        d.append($('<div/>', { class:"card s"+h.suit+" n"+h.number, json:escape(JSON.stringify(h))}).append(h.toString())).append('<br/>');
+        d.append($('<div/>', { class:"card s"+h.suit+" n"+h.number, json:escape(JSON.stringify(h))}).append(h.toString()));
       });
 
       if ((lc = game.players[me].lastcard) && (game.turn==me ^ game.stage==0))
@@ -80,21 +80,21 @@ $(document).ready(function () {
     });
   };
 
-  $('.card').live('mouseover', function() {
+  $('.card').live('mouseenter', function() {
     card = unescape($(this).attr('json'));
     $('.playcard').remove();
-    $(this).after($('<span/>', {class:'playcard'})
-                   .append($('<a/>', { text: 'discard', href:'#', onclick: 'discard('+card+')' }),
-                           $('<a/>', { text: 'play', href:'#', onclick: 'play('+card+')' }))
+    $(this).append($('<span/>', {class:'playcard'})
+                   .append($('<a/>', { text: '⇨discard', href:'#', onclick: 'discard("'+escape(card)+'")' }),
+                           $('<a/>', { text: '⇨play', href:'#', onclick: 'play("'+escape(card)+'")' }))
                    );
   });
 })
 
 function discard(card) {
-  socket.emit('discard', {gid:game.id, sid:sid, card:card });
+  socket.emit('discard', {gid:game.id, sid:sid, card:JSON.parse(unescape(card)) });
 }
 function play(card) {
-  socket.emit('play', {gid:game.id, sid:sid, card:card });
+  socket.emit('play', {gid:game.id, sid:sid, card:JSON.parse(unescape(card)) });
 }
 
 

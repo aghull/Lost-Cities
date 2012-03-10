@@ -1,109 +1,132 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  padding: 10px 50px;
+  font: 14px "Georgia", Helvetica, Arial, sans-serif;
 }
 
 a {
   color: #00B7FF;
 }
 
+h1 {
+  width: 640px;
+  text-align: center;
+  margin: 0 0 6px;
+}
+#message {
+  border: 1px solid #aaa;
+  color: #aaa;
+  width: 640px;
+  padding: 4px;
+  border-radius: 4px;
+  height: 20px;
+}
+
 .spot {
   position: absolute;
-  width: 90px; height: 190px;
-  border: 1px solid black;
+  width: 80px; height: 190px;
+  border: 1px solid #aaa;
   margin: 5px;
   overflow: auto;
 }
 
 .worth {
-  position: absolute;
   text-align: right;
-  top: 170px;
   width: 100%;
-}
-
-#board {
-  width:600px;
-  height:600px;
-  position: relative;
-  float:left;
+  color: #666;
+  font-size: 8px;
 }
 #playerinfo {
+  margin-left: 15px;
   float:left;
 }
 #players a {
-  padding-left: 6px;
+  display: block;
+  color: black;
+  text-decoration: none;
+}
+.s0, .red {
+  background-image: -moz-linear-gradient(bottom, #c99, #fcc);
+  background-image: -webkit-linear-gradient(bottom, #c99, #fcc);
+  background-color: #fcc;
+  font-weight: bold;
+  color: #600;
+}
+.s1, .white {
+  background-image: -moz-linear-gradient(bottom, #ccc, #fff);
+  background-image: -webkit-linear-gradient(bottom, #ccc, #fff);
+  background-color: #fff;
+  font-weight: bold;
+  color: #666;
+}
+.s2, .green {
+  background-image: -moz-linear-gradient(bottom, #9c9, #cfc);
+  background-image: -webkit-linear-gradient(bottom, #9c9, #cfc);
+  background-color: #cfc;
+  font-weight: bold;
+  color: #060;
+}
+.s3, .yellow {
+  background-image: -moz-linear-gradient(bottom, #bc5, #ef9);
+  background-image: -webkit-linear-gradient(bottom, #bc5, #ef9);
+  background-color: #ef9;
+  font-weight: bold;
+  color: #450;
+}
+.s4, .blue {
+  background-image: -moz-linear-gradient(bottom, #99c, #ccf);
+  background-image: -webkit-linear-gradient(bottom, #99c, #ccf);
+  background-color: #ccf;
+  font-weight: bold;
+  color: #006;
 }
 
-#spot0 {
-  left: 0px;
-  top: 200px;
-  background-color: #ccc;
-}
-div.card {
-  width: 100px;
+table#board {
   float:left;
-  text-align: center;
-  border-width: 1px 1px 0;
-  border-color: black;
-  border-style: solid;
+  border: none;
 }
-div.card:nth-last-of-type(1) {
-  border-bottom: 1px solid black;
-  height:100px;
+table#board tr {
+  height: 100px;
+  vertical-align: top;
 }
-.playcard{
-  float:left;
+table#board td {
+  width: 80px;
+  padding: 5px;
+  border: none;
 }
-.spot span {
-  border-bottom: 1px solid black;
+table#board td span, div.card {
+  border: 1px solid #aaa;
+  border-bottom-width: 0px;
   display: block;
   text-align: center;
+  border-top-right-radius: 4px;
+  border-top-left-radius: 4px;
+  padding-bottom: 2px;
+  margin-top: -2px;
 }
-.spot span:nth-last-of-type(1) {
+table#board td span:nth-last-of-type(1), div.card:nth-last-of-type(1) {
+  border-bottom-width: 1px;
   height: 100px;
+  border-bottom-right-radius: 4px;
+  border-bottom-left-radius: 4px;
 }
-.card.s0 {
-  background-color: #fcc;
+table#board td.deck {
+  height: 100px;
+  background-color: #ccc;
+  border-radius: 4px;
+  padding: 8px;
+  width: 55px;
 }
-.card.s1 {
-  background-color: #fff;
+
+div.card {
+  width: 80px;
 }
-.card.s2 {
-  background-color: #cfc;
+div.card span {
+  background: none;
 }
-.card.s3 {
-  background-color: #ef9;
-}
-.card.s4 {
-  background-color: #ccf;
-}
-.spot.s0 {
-  left: 100px;
-  background-color: #fcc;
-}
-.spot.s1 {
-  left: 200px;
-  background-color: #fff;
-}
-.spot.s2 {
-  left: 300px;
-  background-color: #cfc;
-}
-.spot.s3 {
-  left: 400px;
-  background-color: #ef9;
-}
-.spot.s4 {
-  left: 500px;
-  background-color: #ccf;
-}
-.spot.discard {
-  top: 200px;
-}
-.spot.p1, body.player2 .spot.p2 {
-  top: 400px;
-}
-.spot.p2, body.player2 .spot.p1 {
-  top: 0px;
+.playcard{
+    display: block;
+    height: 50px;
+    width: 70px;
+    margin: 5px;
+    text-align: center;
 }

@@ -172,7 +172,7 @@ Card = function(suit,number) {
 
 Card.prototype = new Base;
 Card.prototype.suitName = function() { return Game.prototype.suits[this.suit]; };
-Card.prototype.pipName = function() { return this.number?this.number:'COOP' };
+Card.prototype.pipName = function() { return this.number?this.number:'★★★' };
 Card.prototype.toString = function() { return '<span class="'+this.suitName()+'">'+this.pipName()+'</span>' };
 Card.worth = function(cards) {
   if (cards.length==0) return 0;
