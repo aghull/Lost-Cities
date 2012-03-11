@@ -3,7 +3,7 @@ var socket;
 
 function updateGame(g, message) {
   noGame = game!=null && game.id==null;
-  if (game!=null && game.id!=g.id) return;
+  if (!noGame && game!=null && game.id!=g.id) return;
   game = new Game().load(g);
   if (noGame && game.id!=null) document.location='/game/'+game.id;
 
