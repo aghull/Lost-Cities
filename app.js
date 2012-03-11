@@ -70,10 +70,10 @@ function loadGame(id, callback) {
           game.load(JSON.parse(val));
         } catch (e) {}
       }
-      callback.call(this, game);
+      if (typeof callback=='function') callback.call(this, game);
     });
   } else {
-    callback.call(this, game);
+    if (typeof callback=='function') callback.call(this, game);
   }
 }
 
@@ -84,7 +84,7 @@ function saveGame(game) {
 
 function listGames(callback) {
   redis.keys('*', function(err, keys) {
-    callback.call(this, keys);
+    if (typeof callback=='function') callback.call(this, keys);
   });
 }    
 
