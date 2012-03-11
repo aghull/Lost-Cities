@@ -42,7 +42,8 @@ h1 {
 }
 #players a {
   display: block;
-  color: black;
+  color: inherit;
+  font-weight: normal;
   text-decoration: none;
 }
 .s0, .red {
