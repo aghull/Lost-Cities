@@ -7,7 +7,7 @@ body, button, input {
 }
 
 a {
-  color: #00B7FF;
+  color: #43a;
 }
 
 h1 {
@@ -18,7 +18,7 @@ h1 {
 #message {
   border: 1px solid #aaa;
   background: white;
-  color: #aaa;
+  color: #666;
   width: 640px;
   padding: 4px;
   border-radius: 4px;
@@ -115,12 +115,14 @@ table#board td span:nth-last-of-type(1), div.card:nth-last-of-type(1) {
   border-bottom-right-radius: 4px;
   border-bottom-left-radius: 4px;
 }
-table#board td.deck {
+#deck {
   height: 100px;
+  border: 1px solid #aaa;
   background-color: #ccc;
   border-radius: 4px;
   padding: 8px;
-  width: 55px;
+  width: 62px;
+  color: #666;
 }
 
 div.card {
@@ -141,7 +143,7 @@ button, input {
   border: 1px solid #aaa;
   border-radius: 4px;
   background-image: -moz-linear-gradient(bottom, #eef, #99a);
-  background-image: -webkit-linear-gradient(bottom, #c99, #fcc);
+  background-image: -webkit-linear-gradient(bottom, #eef, #99a);
   background-color: #fcc;
   font-weight: bold;
   color: #332;

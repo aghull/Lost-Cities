@@ -23,17 +23,17 @@ function updateGame(g, message) {
   d = $('#players');
   d.empty();
   $.each(game.players, function(i,p) {
-    d.append($('<p/>', {text: p.name, style: "font-weight: "+(game.turn==i?'bold':'normal')}));
+    d.append($('<p/>', {text: p.name+' ('+p.totalscore+')', style: "font-weight: "+(game.turn==i?'bold':'normal')}));
   });
 
   if (game.turn!=null) {
-    $('#spot0').html(game.spots[0].length+' cards left');
+    $('#deck').html(game.spots[0].length+' cards left');
 
     if (game.isover) {
-      $('#message').html('Game is over.<br/>');
-      $('#message').append('<strong>'+game.players[0].name+'</strong>: '+game.players[0].score+' (total '+game.players[0].totalscore+')');
-      $('#message').append(' <strong>'+game.players[1].name+'</strong>: '+game.players[1].score+' (total '+game.players[1].totalscore+')');
-      $('#message').append($('<p/>').append($('<a/>',{href:'#',onclick:"socket.emit('restartGame',{gid:\'"+game.id+"\'}, )",text:"Play again"})));
+      $('#message').html('Game is over. ');
+      $('#message').append('<strong>'+game.players[0].name+'</strong>: '+game.players[0].score+' (total '+game.players[0].totalscore+') ');
+      $('#message').append(' <strong>'+game.players[1].name+'</strong>: '+game.players[1].score+' (total '+game.players[1].totalscore+') ');
+      $('#message').append($('<a/>',{href:'#',onclick:"socket.emit('restartGame',{gid:\'"+game.id+"\'})",text:"Next round"}));
     }
     for (i=1; i<=15; i++) {
       spot = $('#spot'+i);

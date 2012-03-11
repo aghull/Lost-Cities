@@ -119,7 +119,7 @@ Game.prototype.draw = function(player, spot) {
   this.stage = 0;
   this.turn = 1-this.turn;
   this.message(this.players[this.turn],
-               player.name+' played '+this.suits[(this.lastSpot-1)%5]+' and picked up '+(spot==0?'from deck':player.lastcard.suitName()+' '+player.lastcard.pipName()));
+               player.name+(this.lastSpot<6?' discarded ':' played ')+this.suits[(this.lastSpot-1)%5]+' and picked up '+(spot==0?'from deck':player.lastcard.suitName()+' '+player.lastcard.pipName()));
   this.lastSpot = null;
   if (this.spots[0].length==0) {
     this.endGame();
