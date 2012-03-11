@@ -1,5 +1,8 @@
 body {
   padding: 10px 50px;
+  background-image: url('/images/parchment.jpg');
+}
+body, button, input {
   font: 14px "Georgia", Helvetica, Arial, sans-serif;
 }
 
@@ -14,6 +17,7 @@ h1 {
 }
 #message {
   border: 1px solid #aaa;
+  background: white;
   color: #aaa;
   width: 640px;
   padding: 4px;
@@ -131,4 +135,15 @@ div.card span {
     width: 70px;
     margin: 5px;
     text-align: center;
+}
+
+button, input {
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  background-image: -moz-linear-gradient(bottom, #eef, #99a);
+  background-image: -webkit-linear-gradient(bottom, #c99, #fcc);
+  background-color: #fcc;
+  font-weight: bold;
+  color: #332;
+  padding: 4px 2px;
 }

@@ -11,9 +11,13 @@ function updateGame(g, message) {
   $.each(game.players, function(i,p) { if (p.id==sid) me = i; });
   if (me != null) {
     $("table#board").prepend($("tr#p"+(2-me)).remove());
+    $("table#board").show();
     $('form#addPlayer').remove();
     if (game.players.length==1) message='Player 2 may join at <a href="'+document.location+'">'+document.location+'</a>';
+  } else {
+    $("table#board").hide();
   }
+
   $('#message').empty();
   $('#message').html(message);
   d = $('#players');
