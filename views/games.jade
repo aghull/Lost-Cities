@@ -1,0 +1,8 @@
+h1 Lost Cities
+
+ul#games
+  each game,id in games
+    li
+      a(href="/game/"+id)= '#'+id
+      each score, player in game
+        = " "+player

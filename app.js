@@ -65,15 +65,15 @@ function loadGame(id, callback) {
   var game = new Game();
   if (id!=null) {
     redis.get(id, function(err, val) {
-      if (val!=null) {
+      if (!err && val!=null) {
         try {
           game.load(JSON.parse(val));
         } catch (e) {}
       }
-      if (typeof callback=='function') callback.call(this, game);
+      callback.call(this, game);
     });
   } else {
-    if (typeof callback=='function') callback.call(this, game);
+    callback.call(this, game);
   }
 }
 
@@ -90,25 +90,27 @@ function listGames(callback) {
 
 function games(req,res) {
   var gamelist = {};
+  function finish(games) {
+    res.render('games', {
+      games:gamelist,
+      title:'Lost Cities'
+    });
+  }
+
   listGames(function(games) {
     console.log(games);
     gamecount=games.length;
+    if (!gamecount) finish(gamelist);
     _(games).each(function(game) {
       console.log(game);
       loadGame(game, function(game) {
-        gamecount--;
         if (game.players && game.players.length) {
           g = gamelist[game.id] = {};
           _(game.players).each(function(player) {
             g[player.name] = player.score;
           });
         }
-        if (!gamecount) {
-          res.render('games', {
-            games:gamelist,
-            title:'Lost Cities'
-          });
-        }
+        if (!--gamecount) finish(gamelist);
       });
     });
   });

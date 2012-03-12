@@ -25,6 +25,17 @@ h1 {
   height: 20px;
   margin-bottom: 10px;
 }
+ul#games {
+  border: 1px solid #aaa;
+  background: white;
+  color: #666;
+  width: 640px;
+  padding: 14px 10px;
+  border-radius: 4px;
+}
+ul#games li {
+  list-style-type: none;
+}
 
 .spot {
   position: absolute;
